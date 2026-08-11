@@ -1,0 +1,95 @@
+let nome = prompt("Insira seu nome:")
+let faseAtual = 1
+let playerHP = 100
+
+const eventos = [
+    "encontro de inimigo lv1",
+    "encontro de inimigo lv2",
+    "melhoria de equipamento",
+    "obstáculo",
+    "caverna",
+    "baú",
+    "loja"
+]
+
+const perguntas = [
+    { pergunta: "Um sistema com um bom UX é facil de se usar?", resposta: "sim" },
+    { pergunta: "O que é UX? 1(usar experience) 2(", resposta: "azul" },
+    { pergunta: "Quantos lados tem um triângulo?", resposta: "3" },
+    { pergunta: "Qual é o valor de 10 - 4?", resposta: "6" },
+    { pergunta: "Qual a primeira letra da palavra 'computador'?", resposta: "c" }
+]
+
+function eventoAleatorio() {
+    const indice = Math.floor(Math.random() * eventos.length)
+    return eventos[indice]
+}
+
+function fazerPergunta() {
+    const indice = Math.floor(Math.random() * perguntas.length)
+    const item = perguntas[indice]
+    const resposta = prompt(`${item.pergunta}`)
+    return resposta !== null && resposta.toString().trim().toLowerCase() === item.resposta.toLowerCase()
+}
+
+function batalha(tipo, enemyHP) {
+    const danoPlayer = 30
+    const danoInimigo = 20
+    alert(`${nome}, você entrou em combate contra ${tipo}!`)
+
+    while (playerHP > 0 && enemyHP > 0) {
+        const acerto = fazerPergunta()
+
+        if (acerto) {
+            enemyHP -= danoPlayer
+            alert(`Acertou a pergunta! Você causou ${danoPlayer} de dano. HP inimigo: ${Math.max(enemyHP, 0)}`)
+        } else {
+            playerHP -= danoInimigo
+            alert(`Errou a pergunta! O inimigo atacou e causou ${danoInimigo} de dano. Seu HP: ${Math.max(playerHP, 0)}`)
+        }
+
+        if (enemyHP <= 0) {
+            alert(`Você venceu ${tipo}!
+Seu HP restante: ${Math.max(playerHP, 0)}`)
+            return true
+        }
+
+        if (playerHP <= 0) {
+            alert(`Você foi derrotado por ${tipo}. Game over.`)
+            return false
+        }
+    }
+
+    return playerHP > 0
+}
+
+while (faseAtual <= 10 && playerHP > 0) {
+    if (faseAtual === 5) {
+        alert(`${nome}, fase ${faseAtual}: Mini boss apareceu!`)
+        const venceu = batalha("Mini Boss", 150)
+        if (!venceu) break
+    } else if (faseAtual === 10) {
+        alert(`${nome}, fase ${faseAtual}: Boss final apareceu!`)
+        const venceu = batalha("Boss Final", 200)
+        if (!venceu) break
+    } else {
+        const evento = eventoAleatorio()
+        alert(`${nome}, fase ${faseAtual}: Evento aleatório -> ${evento}`)
+
+        if (evento === "encontro de inimigo lv1") {
+            const venceu = batalha("Inimigo LV1", 100)
+            if (!venceu) break
+        } else if (evento === "encontro de inimigo lv2") {
+            const venceu = batalha("Inimigo LV2", 125)
+            if (!venceu) break
+        }
+    }
+
+    faseAtual++
+}
+
+if (playerHP > 0 && faseAtual > 10) {
+    alert(`${nome}, você venceu todas as fases! HP final: ${playerHP}`)
+} else if (playerHP <= 0) {
+    alert(`${nome}, seu HP chegou a zero. Tente novamente!`)
+}
